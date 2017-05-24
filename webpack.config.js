@@ -5,7 +5,8 @@ module.exports = {
   entry: ['babel-polyfill', './client/index.js'],
   output: {
     path: '/',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -18,7 +19,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'client/index.html'
+      template: 'client/index.ejs'
     })
   ]
 };

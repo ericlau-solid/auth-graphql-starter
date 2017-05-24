@@ -1,3 +1,5 @@
+require("babel-polyfill");
+const path = require('path');
 const express = require('express');
 const models = require('./models');
 const expressGraphQL = require('express-graphql');
@@ -58,6 +60,19 @@ app.use('/graphql', expressGraphQL({
 const webpackMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('../webpack.config.js');
-app.use(webpackMiddleware(webpack(webpackConfig)));
+const compiler = webpack(webpackConfig);
+app.use(webpackMiddleware(compiler));
+app.use(express.static(path.join(__dirname + '/../client')));
+app.use('*', function (req, res, next) {
+  const filename = path.join(compiler.outputPath, 'index.html');
+  compiler.outputFileSystem.readFile(filename, (err, result) => {
+    if (err) {
+      return next(err);
+    }
+    res.set('content-type', 'text/html');
+    res.send(result);
+    res.end();
+  });
+});
 
 module.exports = app;
